@@ -1,0 +1,35 @@
+;---------------------------------------------------
+; Program : 7-Segment Display 0–9
+; Target  : 8051 Microcontroller
+; Tool    : Keil uVision (ASM51)
+;---------------------------------------------------
+
+ORG 0000H
+
+START:  MOV DPTR, #TABLE      ; Point DPTR to lookup table
+        MOV R0, #10           ; 10 digits to display
+
+NEXT:   CLR A                 ; Clear accumulator
+        MOVC A, @A+DPTR       ; Get code from table
+        MOV P2, A             ; Send to Port 1
+        ACALL DELAY           ; Wait some time
+        INC DPTR              ; Move to next code
+        DJNZ R0, NEXT         ; Repeat until 9
+
+        SJMP START            ; Repeat forever
+
+;----------------------
+; Delay Subroutine
+;----------------------
+DELAY:  MOV R1, #200
+D1:     MOV R2, #255
+D2:     DJNZ R2, D2
+        DJNZ R1, D1
+        RET
+
+;----------------------
+; Lookup Table (Common Cathode)
+;----------------------
+TABLE:  DB 3FH,06H,5BH,4FH,66H,6DH,7DH,07H,7FH,6FH
+
+END
